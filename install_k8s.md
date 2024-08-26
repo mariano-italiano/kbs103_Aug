@@ -14,4 +14,4 @@ Master node(s): 1-8
 
 Worker node(s): 1-6, 9
 
-Installation script: [deploy_k8s.sh](deploy_k8s.sh)
+Preparation script for nodes: [deploy_k8s.sh](deploy_k8s.sh)
