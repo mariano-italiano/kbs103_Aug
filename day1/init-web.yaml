@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: init-web
+spec:
+  containers:
+  - name: nginx
+    image: nginx:1.19.1
+  initContainers:
+  - name: prepare
+    image: busybox
+    command: ['sh', '-c', 'echo "<html><h1>Website from init container</h1></html>" ']
