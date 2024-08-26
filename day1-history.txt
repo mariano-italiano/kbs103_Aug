@@ -1,0 +1,185 @@
+df -h
+sudo poweroff
+sudo -i
+lsmod | grep -e overlay -e netfilter
+sudo -i
+mkdir -p $HOME/.kube
+ls -la
+sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+sudo chown $(id -u):$(id -g) $HOME/.kube/config
+ls -la .kube/config 
+kubectl get nodes
+kubectl get pods -A
+CILIUM_CLI_VERSION=$(curl -s https://raw.githubusercontent.com/cilium/cilium-cli/main/stable.txt)
+CLI_ARCH=amd64
+if [ "$(uname -m)" = "aarch64" ]; then CLI_ARCH=arm64; fi
+curl -L --fail --remote-name-all https://github.com/cilium/cilium-cli/releases/download/${CILIUM_CLI_VERSION}/cilium-linux-${CLI_ARCH}.tar.gz{,.sha256sum}
+sha256sum --check cilium-linux-${CLI_ARCH}.tar.gz.sha256sum
+sudo tar xzvfC cilium-linux-${CLI_ARCH}.tar.gz /usr/local/bin
+rm cilium-linux-${CLI_ARCH}.tar.gz{,.sha256sum}
+cilium install --version 1.16.1
+watch -n1 kubectl get pods -A
+kubectl get nodes
+watch -n1 kubectl get pods -A
+kubectl get nodes
+kubectl drain worker02
+kubectl drain worker02 --ignore-daemonsets
+kubectl drain worker01 --ignore-daemonsets
+kubectl get nodes
+kubectl delete node worker01
+kubectl delete node worker02
+kubectl get nodes
+watch -n1 kubectl get pods -A
+watch -n1 kubectl get pods -A -o wide
+vi .kube/config 
+vi .kube/config
+grep client-cert .kube/config | cut -d " " -f 6
+grep client-cert .kube/config | cut -d " " -f 6 | base64 -d
+grep client-cert .kube/config | cut -d " " -f 6 | base64 -d > client.pem
+grep client-key .kube/config | cut -d " " -f 6 | base64 -d > client.pem
+grep client-cert .kube/config | cut -d " " -f 6 | base64 -d > client.pem
+grep client-key .kube/config | cut -d " " -f 6 | base64 -d > client-key.pem 
+grep certificate-authority .kube/config | cut -d " " -f 6 | base64 -d > ca.pem 
+cat ca.pem
+cat client.pem 
+cat client-key.pem 
+kubectl cluster-info
+curl --cert client.pem --key client-key.pem  --cacert ca.pem https://192.168.1.100:6443/api/v1/nodes
+curl --cert client.pem --key client-key.pem  --cacert ca.pem https://192.168.1.100:6443/api/v1/nodes | jq -r '.items[].metadata.name'
+sudo apt  install jq
+curl --cert client.pem --key client-key.pem  --cacert ca.pem https://192.168.1.100:6443/api/v1/nodes | jq -r '.items[].metadata.name'
+curl --silent --cert client.pem --key client-key.pem  --cacert ca.pem https://192.168.1.100:6443/api/v1/nodes | jq -r '.items[].metadata.name'
+curl --silent --cert client.pem --key client-key.pem  --cacert ca.pem https://192.168.1.100:6443/api/v1/nodes | jq -r '.items[] | "Node name: \(.metadata.name), Taints: \(.spec.taints[0])"'
+curl --silent --cert client.pem --key client-key.pem  --cacert ca.pem https://192.168.1.100:6443/api/v1/namespaces/kube-system/pods | jq -r '.items[].metadata.name'
+curl --silent --cert client.pem --key client-key.pem  --cacert ca.pem https://192.168.1.100:6443/api/v1/namespaces/kube-system/pods/coredns-7db6d8ff4d-gkvck/log | jq -r '.items[].metadata.name'
+curl --silent --cert client.pem --key client-key.pem  --cacert ca.pem https://192.168.1.100:6443/api/v1/namespaces/kube-system/pods/coredns-7db6d8ff4d-gkvck/log'
+curl --silent --cert client.pem --key client-key.pem  --cacert ca.pem https://192.168.1.100:6443/api/v1/namespaces/kube-system/pods/coredns-7db6d8ff4d-gkvck/log
+openssl genrsa -out devops.pem
+openssl genrsa -out devops.key
+openssl req -new -key devops.key -out devops.csr -subj "/CN=devops"
+cat devops.csr
+cat devops.csr | base64 | tr -d '\n'
+git clone https://github.com/mariano-italiano/kbs103_Aug.git
+sudo apt install git
+git clone https://github.com/mariano-italiano/kbs103_Aug.git
+cd kbs103_Aug/
+mkdir day1
+cd day1/
+cd 
+ls -la
+mv devops.* kbs103_Aug/day1/
+mv *.pem kbs103_Aug/day1/
+cd kbs103_Aug/day1/
+ls -la
+vi user-request-devops.yaml
+kubectl create -f user-request-devops.yaml
+kubectl get certificate
+kubectl get csr
+kubectl certificate approve user-request-devops
+kubectl get csr
+kubectl get csr user-request-devops
+kubectl get csr user-request-devops -o yaml
+echo "LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSURCakNDQWU2Z0F3SUJBZ0lRSU1tNldQV3ZUKzVQbEhpYUxqSGRmekFOQmdrcWhraUc5dzBCQVFzRkFEQVYKTVJNd0VRWURWUVFERXdwcmRXSmxjbTVsZEdWek1CNFhEVEkwTURneU5qQTVORFV5T1ZvWERUSTFNRGd5TmpBNQpORFV5T1Zvd0VURVBNQTBHQTFVRUF4TUdaR1YyYjNCek1JSUJJakFOQmdrcWhraUc5dzBCQVFFRkFBT0NBUThBCk1JSUJDZ0tDQVFFQXZPMitrUngrNzdZT2drODVZWDVuT0pTWTVUMys4eWJWRVRwTDFFeGdZeDN6aHY1VWV0L2QKZVpaSHpGT3hVbXJ5QnJBM2tpalFLM1ovcEo2WFhJemxISXlhK0oxNHdIM0dmVmpPelNndTNycXlBWTdENUkvNQp5WVp6VXcxcFhkSlZDejdKcDhSSGtwTktrdGNTNE9Zcll1TTlZenBMejRKY1BsS1ZWK2M0YmhXcHZ4VEY4TWkrCmdMWGZxaWl0RHMrVG9CVlRGM0tvUHpxL0psVmNzWUtkTXRRY2VEMXVSbDBHYXlOZk56Wm9SYTBXc1lCMmhSOEEKcTlCMEFzaXhaWnQyV0NKUGRYSXhzNnMxQmhyd3ZYVk01UXZWV2VJdkVLSFozQTY4SUhtTnpGQmVua3FTVWhsaQo0WmZXT1dtVCtIYlFWN1M0enJPNlkxUE9MTmo4aHFVOHF3SURBUUFCbzFZd1ZEQU9CZ05WSFE4QkFmOEVCQU1DCkJhQXdFd1lEVlIwbEJBd3dDZ1lJS3dZQkJRVUhBd0l3REFZRFZSMFRBUUgvQkFJd0FEQWZCZ05WSFNNRUdEQVcKZ0JTYmFIZG8xWHlCS3liOGVxMmJ6enJrQTlJU0d6QU5CZ2txaGtpRzl3MEJBUXNGQUFPQ0FRRUFRdWRLYzZDaAp0ZjFzZzdrNnkvZ0pXRFFWaHZTVEU2K0JLdjA3VDQ3TjNUUlh3dlE5YUI4dFRhZWZhTFFOVTZ5ajRpNWszWUZVCldSU1VuZng1a3FzR0hoWDNScEJJNEpadXpsUlh6Ym51SUF1OVR3M0lzWTQwMTRyMDZDZVByc0htYmczWUtVa1EKVE9pN1FBMFdpUlhiZnVZeVZGZnByMFVTWTltYlhZMnQ5RVlHU0NuL0o3cEhIVFd4aG9OdkNBTEU5VmRiejJxNwo4OEZvQllrR0M4bWhqR1VxZzBMTFo3MTg2S0VvMmF2a2x6V1pua2lqQTY4SDRnS3g4NWUvcXBOTVFQZEZ4UHRTCk45TkU5WE5DWWdmZkZMbU8vb1RpejJDbVloRHJtMURQUEdsaG1oM0NoT2FaRHp1dy9qTG5oK040S0phTitoM3YKUlFUUzRWNncvQ2hMRXc9PQotLS0tLUVORCBDRVJUSUZJQ0FURS0tLS0tCg==" | base64 -d 
+echo "LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSURCakNDQWU2Z0F3SUJBZ0lRSU1tNldQV3ZUKzVQbEhpYUxqSGRmekFOQmdrcWhraUc5dzBCQVFzRkFEQVYKTVJNd0VRWURWUVFERXdwcmRXSmxjbTVsZEdWek1CNFhEVEkwTURneU5qQTVORFV5T1ZvWERUSTFNRGd5TmpBNQpORFV5T1Zvd0VURVBNQTBHQTFVRUF4TUdaR1YyYjNCek1JSUJJakFOQmdrcWhraUc5dzBCQVFFRkFBT0NBUThBCk1JSUJDZ0tDQVFFQXZPMitrUngrNzdZT2drODVZWDVuT0pTWTVUMys4eWJWRVRwTDFFeGdZeDN6aHY1VWV0L2QKZVpaSHpGT3hVbXJ5QnJBM2tpalFLM1ovcEo2WFhJemxISXlhK0oxNHdIM0dmVmpPelNndTNycXlBWTdENUkvNQp5WVp6VXcxcFhkSlZDejdKcDhSSGtwTktrdGNTNE9Zcll1TTlZenBMejRKY1BsS1ZWK2M0YmhXcHZ4VEY4TWkrCmdMWGZxaWl0RHMrVG9CVlRGM0tvUHpxL0psVmNzWUtkTXRRY2VEMXVSbDBHYXlOZk56Wm9SYTBXc1lCMmhSOEEKcTlCMEFzaXhaWnQyV0NKUGRYSXhzNnMxQmhyd3ZYVk01UXZWV2VJdkVLSFozQTY4SUhtTnpGQmVua3FTVWhsaQo0WmZXT1dtVCtIYlFWN1M0enJPNlkxUE9MTmo4aHFVOHF3SURBUUFCbzFZd1ZEQU9CZ05WSFE4QkFmOEVCQU1DCkJhQXdFd1lEVlIwbEJBd3dDZ1lJS3dZQkJRVUhBd0l3REFZRFZSMFRBUUgvQkFJd0FEQWZCZ05WSFNNRUdEQVcKZ0JTYmFIZG8xWHlCS3liOGVxMmJ6enJrQTlJU0d6QU5CZ2txaGtpRzl3MEJBUXNGQUFPQ0FRRUFRdWRLYzZDaAp0ZjFzZzdrNnkvZ0pXRFFWaHZTVEU2K0JLdjA3VDQ3TjNUUlh3dlE5YUI4dFRhZWZhTFFOVTZ5ajRpNWszWUZVCldSU1VuZng1a3FzR0hoWDNScEJJNEpadXpsUlh6Ym51SUF1OVR3M0lzWTQwMTRyMDZDZVByc0htYmczWUtVa1EKVE9pN1FBMFdpUlhiZnVZeVZGZnByMFVTWTltYlhZMnQ5RVlHU0NuL0o3cEhIVFd4aG9OdkNBTEU5VmRiejJxNwo4OEZvQllrR0M4bWhqR1VxZzBMTFo3MTg2S0VvMmF2a2x6V1pua2lqQTY4SDRnS3g4NWUvcXBOTVFQZEZ4UHRTCk45TkU5WE5DWWdmZkZMbU8vb1RpejJDbVloRHJtMURQUEdsaG1oM0NoT2FaRHp1dy9qTG5oK040S0phTitoM3YKUlFUUzRWNncvQ2hMRXc9PQotLS0tLUVORCBDRVJUSUZJQ0FURS0tLS0tCg==" | base64 -d > devops.crt
+kubectl completion bash | sudo tee /etc/bash_completion.d/kubectl > /dev/null
+sudo apt-get install bash-completion
+echo 'source <(kubectl completion bash)' >>~/.bashrc
+source ~/.bashrc
+kubectl --kubeconfig config-devops config set-cluster k8s-master --incsecure-skip-tls-verify=true --server https://192.168.1.100:6443
+kubectl --kubeconfig config-devops config set-cluster k8s-master --insecure-skip-tls-verify=true --server https://192.168.1.100:6443
+vi config-devops 
+kubectl --kubeconfig config-devops config set-credentials devops --client-certificate devops.crt --client-key devops.key --embed-certs true
+kubectl --kubeconfig config-devops config set-credentials devops --client-certificate devops.crt --client-key devops.key --embed-certs=true
+vi config-devops 
+kubectl --kubeconfig config-devops config set-context --cluster k8s-master --user devops
+kubectl --kubeconfig config-devops config set-context devops-context --cluster k8s-master --user devops
+vi config-devops 
+kubectl create ns devops 
+kubectl -n devops create role --help
+kubectl -n devops create role devops-role --verb=get,list,watch --resource=pods,configmaps
+kubectl -n devops create rolebinding --help
+kubectl -n devops create rolebinding devops-rolebinding --role=devops-role --user=devops
+kubectl get roles,rolebindings.rbac.authorization.k8s.io -n devops 
+kubectl describe role -n devops devops-role 
+sudo useradd -m -s /bin/bash devops
+sudo -i
+kubectl -n devops logs test-devops-pod
+kubectl events
+kubectl get pods -A
+kubectl create serviceaccount api-user
+kubectl get roles
+kubectl get roles -A
+kubectl get clusterrole
+kubectl create clusterrolebinding api-role-binding --clusterrole cluster-admin --help
+kubectl create clusterrolebinding api-role-binding --clusterrole cluster-admin --serviceaccount=default:api--user 
+kubectl auth can-i create deployments --help
+kubectl auth can-i list pods --as=system:serviceaccount:default:api-user
+kubectl auth can-i get pods --as=system:serviceaccount:default:api-user
+kubectl auth can-i get pods --as=system:serviceaccount:default:api-user -n default
+kubectl auth can-i get pods --as=system:serviceaccount:default:api-user -n kube-system
+kubectl create clusterrole api-clusterrole --verb=create,delete --resource=deployments
+kubectl create clusterrolebinding api-role-binding2 --clusterrole api-clusterrole --serviceaccount=default:api-user 
+kubectl create clusterrolebinding api-role-binding --clusterrole cluster-admin --serviceaccount=default:api-user 
+kubectl delete clusterrole api-role-binding
+kubectl delete clusterrolebindings.rbac.authorization.k8s.io api-role-binding
+kubectl create clusterrolebinding api-role-binding --clusterrole cluster-admin --serviceaccount=default:api-user 
+kubectl auth can-i get pods --as=system:serviceaccount:default:api-user -n default
+kubectl auth can-i get pods --as=system:serviceaccount:default:api-user -n kube-system
+kubectl delete clusterrolebindings.rbac.authorization.k8s.io api-role-binding
+kubectl get clusterrole api-clusterrole 
+kubectl describe clusterrole api-clusterrole 
+kubectl auth can-i get pods --as=system:serviceaccount:default:api-user
+kubectl auth can-i create deploy --as=system:serviceaccount:default:api-user
+kubectl auth can-i patch deploy --as=system:serviceaccount:default:api-user
+kubectl auth can-i delete deploy --as=system:serviceaccount:default:api-user
+kubectl auth can-i get cm --as=system:serviceaccount:default:api-user
+kubectl auth can-i patch deploy --as=system:serviceaccount:default:api-user -n kube-system
+kubectl auth can-i delete deploy --as=system:serviceaccount:default:api-user -n kube-system
+kubectl get pods
+kubectl get pods -A
+kubectl run pod1 --image nginx
+kubectl get pods -A
+kubectl events
+sudo kubeadm reset
+rm /etc/cni/net.d
+rm /etc/cni/net.d -fr 
+sudo rm /etc/cni/net.d -fr 
+sudo kubeadm init --pod-network-cidr 192.168.0.0/16
+kubectl get nodes
+cd
+mkdir -p $HOME/.kube
+kubectl get nodes
+cilium install
+kubectl get pods -A
+watch -n1 kubectl get pods -A
+watch -n1 kubectl get pods -A -o wide
+kubectl get nodes
+watch -n1 kubectl get pods -A -o wide
+kubectl rollout restart deployment -n kube-system coredns
+watch -n1 kubectl get pods -A -o wide
+kubectl events
+watch -n1 kubectl get pods -A -o wide
+kubectl get pods -A -o wide
+kubectl logs -n kube-system coredns-86b8b7db44-dmnj9
+kubectl get events -n kube-system
+kubectl get events -n kube-system --sort-by .metadata.timestamp
+kubectl get events -n kube-system
+sudo -u
+sudo -i
+cilium install
+CILIUM_CLI_VERSION=$(curl -s https://raw.githubusercontent.com/cilium/cilium-cli/main/stable.txt)
+CLI_ARCH=amd64
+if [ "$(uname -m)" = "aarch64" ]; then CLI_ARCH=arm64; fi
+curl -L --fail --remote-name-all https://github.com/cilium/cilium-cli/releases/download/${CILIUM_CLI_VERSION}/cilium-linux-${CLI_ARCH}.tar.gz{,.sha256sum}
+sha256sum --check cilium-linux-${CLI_ARCH}.tar.gz.sha256sum
+sudo tar xzvfC cilium-linux-${CLI_ARCH}.tar.gz /usr/local/bin
+rm cilium-linux-${CLI_ARCH}.tar.gz{,.sha256sum}
+mkdir -p $HOME/.kube
+kubectl get nodes
+cilium install
+kubectl get nodes
+watch -n1 kubectl get pods -A
+cd kbs103_Aug/
+git status
+history
+history | awk '$1 > 1' | cut -c 8- > day1-history.txt
