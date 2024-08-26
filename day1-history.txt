@@ -183,3 +183,68 @@ cd kbs103_Aug/
 git status
 history
 history | awk '$1 > 1' | cut -c 8- > day1-history.txt
+kubectl run nginx --image nginx
+kubectl get pods
+kubectl get pods -o wide
+kubectl exec -it nginx -- bash
+kubectl get pods -o wide
+kubectl run nginx --image nginx -o yaml --dry-ru=client > nginx.yaml
+kubectl run nginx --image nginx -o yaml --dry-run=client > nginx.yaml
+vi nginx.yaml
+vi nginx.yaml
+kubectl apply -f nginx.yaml
+kubectl get pods
+kubectl run test-pod --image busybox --labels test-app=busybox -o yaml --dry-run=client
+kubectl run test-pod --image busybox --labels test-app=busybox -o yaml --dry-run=client > test-pod.yaml
+vi test-pod.yaml
+kubectl apply -f test-pod.yaml
+kubectl get pods
+kubectl get pods pod1 -o yaml
+kubectl describe pod nginx
+kubectl get pods --show-labels
+kubectl get pods --selector kubernetes.io/app
+kubectl run nginx2 --image nginx --labels kubernetes.io/app=testapp
+kubectl get pods --selector kubernetes.io/app
+kubectl get pods --selector kubernetes.io/app=web
+kubectl get pods --selector kubernetes.io/app=testapp
+kubectl edit pod nginx
+kubectl get pods --show-labels
+kubectl exec -it nginx -- bash
+kubectl get pods -o wide
+kubectl replace -f nginx.yaml 
+kubectl delete pod nginx 
+kubectl replace -f nginx.yaml 
+kubectl apply -f nginx.yaml 
+kubectl get pods -o wide
+cd kbs103_Aug/day1
+vi init-web.yaml 
+kubectl apply -f init-web.yaml
+kubectl get pods
+kubectl get pods -o wide
+vi sidecar-pod.yaml
+kubectl apply -f sidecar-pod.yaml
+kubectl get pods
+kubectl logs sidecar-pod 
+kubectl logs sidecar-pod -c sidecar 
+kubectl logs sidecar-pod --all-containers 
+kubectl exec -it sidecar-pod -c busybox1 
+kubectl exec -it sidecar-pod -c busybox1  -- bash
+kubectl exec -it sidecar-pod -c busybox1  -- sh
+kubectl exec -it sidecar-pod -c sidecar -- sh
+vi my-replicaset.yaml
+kubectl get pods --show-labels 
+kubectl edit pod nginx 
+kubectl get pods --show-labels 
+kubectl apply -f my-replicaset.yaml 
+kubectl get rs
+kubectl get rs,pod
+kubectl get rs,pod --show-labels 
+kubectl delete pod nginx 
+kubectl get rs,pod --show-labels 
+kubectl describe rs my-replicaset 
+kubectl scale rs my-replicaset --replicas 8
+kubectl get rs,pod --show-labels 
+kubectl scale rs my-replicaset --replicas 1
+kubectl get rs,pod --show-labels 
+kubectl delete rs my-replicaset 
+kubectl get rs,pod --show-labels 
