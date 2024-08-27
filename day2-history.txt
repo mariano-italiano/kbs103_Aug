@@ -1,0 +1,211 @@
+kubectl get ndoes
+kubectl get nodes
+cd kbs103_Aug/
+mkdir day2
+cd day2
+vi my-deployment.yaml
+kubectl apply -f my-deployment.yaml
+kubectl get pods,deploy
+kubectl get pods,deploy -o wide
+kubectl describe deployments.apps my-deployment 
+kubectl edit deployments.apps my-deployment 
+kubectl scale deployment my-deployment  --replicas 6
+kubectl get pods,deploy -o wide
+kubectl describe deployments.apps my-deployment 
+kubectl set image deploy my-deployment web=nginx:1.16.1
+kubectl rollout status deployment my-deployment 
+kubectl get pods,deploy -o wide
+watch -n1 kubectl get pods,deploy
+kubectl rollout status deployment my-deployment 
+kubectl edit deployments.apps my-deployment 
+kubectl describe deployments.apps my-deployment 
+kubectl annotate deployment/nginx-deployment kubernetes.io/change-cause="updated version of nginx from 1.16.1 to 1.19.2, ChangeNo: 12345, Implementer: Myself"
+kubectl annotate deployment my-deployment kubernetes.io/change-cause="updated version of nginx from 1.16.1 to 1.19.2, ChangeNo: 12345, Implementer: Myself"
+kubectl describe deployments.apps my-deployment 
+kubectl edit deployments.apps my-deployment 
+kubectl rollout status deployment my-deployment 
+kubectl get pods,deploy -o wide
+kubectl rollout history deployment my-deployment 
+kubectl set image deploy my-deployment web=nginx:broken --record 
+kubectl rollout history deployment my-deployment 
+kubectl describe deployments.apps my-deployment 
+kubectl rollout status deployment my-deployment 
+kubectl get pods,deploy -o wide
+kubectl rollout history deployment my-deployment 
+kubectl rollout undo deployment my-deployment --to-revision 3
+kubectl get pods,deploy -o wide
+kubectl rollout status deployment my-deployment 
+kubectl rollout history deployment my-deployment 
+kubectl get pods,deploy -o wide
+kubectl rollout restart deployment my-deployment 
+kubectl get pods,deploy -o wide
+kubectl drain worker01 --ignore-daemonsets 
+kubectl get node
+kubectl get pods,deploy -o wide
+kubectl uncordon worker01
+kubectl get ndoes
+kubectl get nodes
+kubectl get pods,deploy -o wide
+kubectl rollout restart deployment my-deployment 
+kubectl get pods,deploy -o wide
+kubectl get pods -A
+kubectl get pods -A -o wide
+kubectl get pods -o wide
+kubectl describe nodes k8s-master 
+kubectl run nodename-pod --image nginx -o yaml --dry-run=client > nodename-pod.yaml
+vi nodename-pod.yaml
+kubectl apply -f nodename-pod.yaml
+kubectl get pods -o wide
+kubectl get pods -o wide | grep worker01 | wc -l
+kubectl get pods -o wide | grep worker02 | wc -l
+cp nodename-pod.yaml nodeselector-pod.yaml
+vi nodeselector-pod.yaml
+kubectl get nodes --show-labels 
+vi nodeselector-pod.yaml
+kubectl apply -f nodeselector-pod.yaml
+kubectl get pods -o wide
+kubectl taint node worker02 kubernetes.io/environment=production
+kubectl taint node worker02 kubernetes.io/environment=production:NoSchedule
+cp nodename-pod.yaml taint-pod.yaml
+vi taint-pod.yaml
+kubectl apply -f taint-pod.yaml
+kubectl get pods -o wide
+kubectl events
+kubectl get pods -o wide
+kubectl delete -f taint-pod.yaml
+kubectl taint node worker01 kubernetes.io/environment=development:NoSchedule
+kubectl apply -f taint-pod.yaml
+kubectl get pods -o wide
+kubectl events
+vi taint-pod.yaml 
+kubectl replcae -f taint-pod.yaml
+kubectl replace -f taint-pod.yaml
+kubectl delete pod taint-pod 
+kubectl apply -f taint-pod.yaml
+kubectl get pods -o wide
+kubectl events
+kubectl get pods -o wide
+kubectl taint node worker02 kubernetes.io/zone=prod:NoExecute
+kubectl get pods -o wide
+kubectl taint node worker02 kubernetes.io/zone-
+kubectl get pods -o wide
+kubectl edit deployments.apps my-deployment 
+kubectl get pods -o wide
+kubectl edit deployments.apps my-deployment 
+kubectl taint node worker02 kubernetes.io/zone=prod:NoExecute
+kubectl get pods -o wide
+watch -n1 kubectl get pods -o wide
+kubectl get pods -o wide
+kubectl taint node worker02 kubernetes.io/zone-
+kubectl get pods -o wide
+kubectl describe nodes worker01
+kubectl taint node worker01 kubernetes.io/environment-
+kubectl taint node worker02 kubernetes.io/environment-
+kubectl describe nodes worker01
+kubectl describe nodes worker02
+kubectl get pods -o wide
+vi with-node-affinity.yaml
+kubectl get nodes --show-labels 
+kubectl apply -f with-node-affinity.yaml
+kubectl get pods -o wide
+kubectl delete pod with-node-affinity 
+kubectl label nodes worker01 kubernetes.io/country=poland
+kubectl label nodes worker02 kubernetes.io/country=france
+kubectl apply -f with-node-affinity.yaml
+kubectl get pods -o wide
+kubectl delete pod with-node-affinity 
+kubectl label nodes worker01 kubernetes.io/environment=development
+kubectl apply -f with-node-affinity.yaml
+kubectl get pods -o wide
+vi with-pod-affinity.yaml
+kubectl get pods--show-labels 
+kubectl get pods --show-labels 
+vi with-pod-affinity.yaml
+kubectl apply -f with-pod-affinity.yaml
+vi with-pod-affinity.yaml
+kubectl apply -f with-pod-affinity.yaml
+kubectl get pods -o wide
+cp with-pod-affinity.yaml with-pod-antiaffinity.yaml
+vi with-pod-antiaffinity.yaml
+kubectl apply -f with-pod-antiaffinity.yaml
+kubectl get pods -o wide
+iptables -L -v -n
+sudo iptables -L -v -n
+vi svc-pod.yaml
+kubectl apply -f svc-pod.yaml
+kubectl get pods -o wide
+kubectl get ns
+kubectl create ns app1
+kubectl -n app1 run test-pod --image radial/busyboxplus:curl --labels app=app1
+kubectl get pod -n app1 
+kubectl delete pod -n app1 test-pod 
+vi test-pod.yaml
+kubectl apply -f test-pod.yaml
+kubectl get pod -n app1 
+vi test-pod.yaml
+kubectl replace -f test-pod.yaml
+kubectl -n app1 delete pod my-pod 
+kubectl apply -f test-pod.yaml
+kubectl get pod -n app1 
+kubectl expose pod svc-pod --port 80 --name python-svc-clusterip
+kubectl get pods,svc,ep
+kubectl get pods,svc,ep -o wide
+kubectl edit svc python-svc-clusterip 
+kubectl get pods,svc,ep -o wide
+kubectl exec -it -n app1 test-pod -- bash
+kubectl exec -it -n app1 test-pod -- sh
+kubectl get pods -o wide
+kubectl exec -it taint-pod -- sh
+vi test-pod.yaml 
+kubectl apply -f test-pod.yaml
+kubectl exec -it test-pod -- sh
+kubectl expose pod svc-pod --port 8080 --name python-svc-nodeport --type NodePort 
+kubectl get svc,pod,ep
+kubectl expose pod svc-pod --port 8080 --name python-svc-loadbalancer --type LoadBalancer 
+kubectl get svc,pod,ep
+kubectl edit svc python-svc-loadbalancer 
+kubectl get svc,pod,ep
+kubectl edit svc python-svc-loadbalancer 
+kubectl get svc,pod,ep
+kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.14.8/config/manifests/metallb-native.yaml
+watch -n1 kubectl get all -n metallb-system
+kubectl get svc
+vi metallb-pool.yaml
+kubectl apply -f metallb-pool.yaml ; watch -n1 kubectl get svc
+vi metallb-pool.yaml
+kubectl get svc
+kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.0.0/deploy/static/provider/baremetal/deploy.yaml
+watch -n1 kubectl get all -n ingress-nginx
+kubectl get svc
+kubectl delete svc python-svc-clusterip python-svc-nodeport python-svc-loadbalancer 
+kubectl edit -n metallb-system ipaddresspools.metallb.io
+kubectl delete -n metallb-system ipaddresspools.metallb.io metallb-pool 
+kubectl edit -n ingress-nginx svc ingress-nginx-controller
+kubectl get svc
+kubectl get svc -n ingress-nginx 
+kubectl create deployment flowers-web --image nginx 
+kubectl create deployment cars-web --image nginx
+kubectl get pods
+kubectl expose deployment cars-web --port 80 --name svc-cars 
+kubectl expose deployment flowers-web --port 80 --name svc-flowers 
+kubectl get svc
+vi cars-index.html
+vi flowers-index.html
+kubectl cp cars-index.html cars-web-7df89f9957-p6qr2:/usr/share/nginx/html/index.html
+kubectl cp flowers-index.html flowers-web-566975cb64-pls4q:/usr/share/nginx/html/index.html
+kubectl get ingressclasses.networking.k8s.io 
+vi ingress-web.yaml
+kubectl apply -f ingress-web.yaml
+kubectl describe ingress ingress-web 
+vi ingress-web.yaml 
+kubectl apply -f ingress-web.yaml
+kubectl describe ingress ingress-web 
+vi volume-pod.yaml
+kubectl apply -f volume-pod.yaml
+kubectl get pods
+kubectl get pods -o wide
+git status
+git pull
+git status
+history 
+history | awk '$1 > 264' | cut -c 8- >> ../day2-history.txt
