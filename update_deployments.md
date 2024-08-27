@@ -3,7 +3,7 @@
 1. First approach (recommended):
 ```sh
 kubectl set image deployment <deploy-name> <container-name>=<image-name>:<image-version>
-kuebctl annotate deployment <deploy-name> kubernetes.io/change-cause="<update text>"
+kubectl annotate deployment <deploy-name> kubernetes.io/change-cause="<update text>"
 ```
 
 2. Second approach:
