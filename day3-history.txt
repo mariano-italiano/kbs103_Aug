@@ -1,0 +1,392 @@
+kubectl get pods -A
+kubectl get svc
+kubectl delete all --all
+cd kbs103_Aug/
+mkdir day3
+cd day3
+kubectl get pods
+vi test-pv.yaml
+kubectl get sc
+vi test-pv.yaml
+vi test-pvc.yaml
+kubectl apply -f test-pv.yaml 
+kubectl get pv
+kubectl apply -f test-pvc.yaml 
+kubectl get pv,pvc
+vi test-pvc.yaml 
+kubectl apply -f test-pvc.yaml 
+kubectl delete pvc test-pvc 
+kubectl apply -f test-pvc.yaml 
+kubectl get pv,pvc
+vi pvolume-pod.yaml
+kubectl apply -f pvolume-pod.yaml
+kubectl exec -it pvolume-pod -- bash
+kubectl get pods -o wide
+vi test-pv
+vi test-pv.yaml 
+kubectl get pods -o wide
+kubectl exec -it pvolume-pod -- bash
+kubectl expose pod pvolume-pod --port 80 --type NodePort --name pvol-svc
+kubectl edit pod pvolume-pod 
+kubectl expose pod pvolume-pod --port 80 --type NodePort --name pvol-svc
+kubectl get svc
+sudo apt install nfs-common nfs-kernel-server cifs-utils -y
+cd 
+mkdir /nfs/data
+mkdir /nfs/data -p
+sudo mkdir /nfs/data -p
+sudo chmod 777 /nfs/data
+sudo chown -r nobody:nogroup /nfs/data
+sudo chown -R nobody:nogroup /nfs/data
+sudo vi /etc/exports 
+sudo exportfs -rav
+sudo systemctl restart nfs-kernel-server
+cd /tmp
+git clone https://github.com/kubernetes-sigs/nfs-ganesha-server-and-external-provisioner.git
+cd nfs-ganesha-server-and-external-provisioner/
+ls -la
+vi deploy/kubernetes/deployment.yaml 
+kubectl apply -f deploy/kubernetes/deployment.yaml
+kubectl create -f deploy/kubernetes/rbac.yaml
+vi deploy/kubernetes/class.yaml
+kubectl apply -f deploy/kubernetes/class.yaml
+cd
+cd kbs103_Aug/day3/
+kubectl get sc
+kubectl edit sc nfs-class 
+kubectl get sc
+kubectl get pv,pvc
+cp -rp test-pvc.yaml sc-pvc.yaml
+vi sc-pvc.yaml
+kubectl apply -f sc-pvc.yaml 
+kubectl get pv,pvc
+cp -rp pvolume-pod.yaml sc-volume-pod.yaml
+vi sc-volume-pod.yaml
+kubectl apply -f sc-volume-pod.yaml
+kubectl  get pods
+cd /nfs/data/
+ls -al
+kubectl get pods -o wide
+cp -rp ~/kbs103_Aug/day2/cars-index.html .
+mv cars-index.html index.html
+ls -la
+sudo chown -R nobody:nogroup .
+ls -la
+cd 
+cd /nfs
+ls -la
+sudo chown -R nobody:nogroup /nfs
+ls -la
+cd /
+ls -la
+sudo chmod -R 777 /nfs
+ls -la
+ls -la nfs/data/
+ls -la nfs/
+sudo chown -R root:root /nfs
+ls -la
+cd /nfs/data/
+ls -la
+kubectl get pods -o wide
+kubectl delete pod sc-volume-pod 
+kubectl apply -f ~/kbs103_Aug/day3/sc-
+kubectl apply -f ~/kbs103_Aug/day3/sc-volume-pod.yaml 
+kubectl get pods -o wide
+kubectl events
+kubectl get pods -o wide
+kubectl edit sc
+kubectl delete pod sc-volume-pod 
+cd
+cd kbs103_Aug/day3/
+kubectl get pv,pvc
+kubectl delete pvc sc-pvc 
+kubectl get pv,pvc
+kubectl edit sc nfs-class 
+kubectl delete sc nfs-class 
+vi nfs-class.yaml
+kubectl apply -f nfs-class.yaml
+kubectl get sc
+kubectl get pv,pvc
+kubectl apply -f sc-pvc.yaml 
+kubectl get pv,pvc
+vi /tmp/nfs-ganesha-server-and-external-provisioner/deploy/kubernetes/scc.yaml 
+vi /tmp/nfs-ganesha-server-and-external-provisioner/deploy/kubernetes/class.yaml 
+kubectl edit sc nfs-class 
+kubectl get pv,pvc
+kubectl delete pvc sc-pvc
+kubectl apply -f sc-pvc.yaml 
+kubectl get pv,pvc
+kubectl delete pvc sc-pvc 
+kubectl delete pod pvolume-pod 
+kubectl delete pvc test-pvc 
+kubectl get pv,pvc
+kubectl apply -f test-pvc.yaml 
+kubectl get pv,pvc
+kubectl get pv test-pv 
+kubectl get pv test-pv  -o yaml
+kubectl patch pv test-pv -p '{"spec":{"claimRef": null }}'
+kubectl get pv,pvc
+vi my-configmap.yaml
+kubectl apply -f my-configmap.yaml
+vi my-configmap.yaml
+kubectl apply -f my-configmap.yaml
+vi my-configmap.yaml
+kubectl apply -f my-configmap.yaml
+kubectl describe cm my-configmap 
+vi service.json
+kubectl create configmap service-cm --from-file service.json 
+kubectl describe cm service-cm 
+vi env-file
+kubectl create cm from-env-file --from-env-file env-file 
+kubectl describe cm from-env-file 
+kubectl create cm test-cm --from-literal APP_VER=1.0 --from-literal APP_MEM=4GB --from-file service.json 
+kubectl describe cm test-cm 
+kubectl get cm
+vi configmap-pod.yaml
+kubectl apply -f configmap-pod.yaml
+kubectl logs configmap-pod 
+kubectl logs configmap-pod | grep -e ENV_VAR -e SERVICE
+kubectl logs configmap-pod | grep -e ENV_VAR -e APP1
+vi configmap-volume-pod.yaml
+kubectl apply -f configmap-volume-pod.yaml
+kubectl exec -it configmap-volume-pod -- bash
+kubectl exec -it configmap-volume-pod -- sh
+kubectl edit  cm my-configmap 
+kubectl describe cm my-configmap 
+kubectl exec -it configmap-volume-pod -- sh
+kubectl create secret generic my-secret --from-literal username=root --from-literal password=Pass1234
+kubectl get secrets my-secret 
+kubectl describe secrets my-secret 
+kubectl get secrets my-secret -o yaml
+echo "UGFzczEyMzQ=" | base64 -d 
+vi mariadb_pass
+kubectl create secret generic mariadb --from-file mariadb_pass 
+kubectl describe secrets mariadb 
+kubectl get secrets mariadb -o yaml
+echo "UGFzc3dvcmRTZWN1cmVAIQo=" | base64 -d
+vi secret-pod.yaml
+kubectl apply -f secret-pod.yaml
+kubectl logs secret-pod | grep -e USER -e PASS
+htpasswd -c .htpasswd john
+sudo apt install apache2-utils
+htpasswd -c .htpasswd john
+vi .htpasswd 
+kubectl create secret generic nginx-htpasswd --from-file .htpasswd 
+rm .htpasswd 
+vi nginx-config.yaml
+kubectl apply -f nginx-config.yaml 
+vi nginx-pod.yaml
+kubectl apply -f nginx-pod.yaml
+kubectl expose pod  nginx-pod --type 80 --name nginx-pod-svc --type NodePort
+kubectl edit pod nginx-pod 
+kubectl expose pod  nginx-pod --type 80 --name nginx-pod-svc --type NodePort
+kubectl get svc
+vi nginx-stfs.yaml
+kubectl appy -f nginx-stfs.yaml
+kubectl apply -f nginx-stfs.yaml
+kubectl get sts
+kubectl get sts,pod
+kubectl scale statefulset nginx-stfs --replicas 6
+kubectl get sts,pod
+watch -n1 kubectl get sts,pod
+kubectl scale statefulset nginx-stfs --replicas 2
+kubectl scale statefulset nginx-stfs --replicas 6
+watch -n1 kubectl get sts,pod
+kubectl get svc,ep,pod
+kubectl scale statefulset nginx-stfs --replicas 3
+kubectl get svc,ep,pod
+vi my-daemonset.yaml
+kubectl apply -f my-daemonset.yaml
+kubectl get pods -o wide
+vi my-daemonset.yaml 
+kubectl delete ds my-daemonset 
+kubectl apply -f my-daemonset.yaml
+vi my-daemonset.yaml 
+kubectl apply -f my-daemonset.yaml
+kubectl get pods -o wide
+vi crd-dbconnection.yaml
+kubectl apply -f crd-dbconnection.yaml
+vi crd-dbconnection.yaml
+kubectl apply -f crd-dbconnection.yaml
+kubectl api-resources | grep db
+cat crd-dbconnection.yaml
+vi dbconn1.yaml
+kubectl apply -f dbconn1.yaml
+kubectl get dbconnections.lab.local 
+kubectl describe dbconnections.lab.local dbconn1 
+kubectl get dbconnections.lab.local -o jsonpath='{.spec.capacityGb}' 
+kubectl get dbconnections.lab.local dbconn1 -o jsonpath='{.spec.capacityGb}' 
+kubectl get dbconnections.lab.local dbconn1 -o jsonpath='{.spec.rootUsername}' 
+kubectl get dbconnections.lab.local dbconn1 -o jsonpath='{.spec.rootUser}' 
+kubectl edit dbcon dbconn1 
+kubectl get dbconnections.lab.local dbconn1 -o jsonpath='{.spec.rootUser}' 
+kubectl get dbconnections.lab.local dbconn1 -o jsonpath='{.spec.capacityGb}' 
+kubectl get pods 
+kubectl exec -it nginx-pod -- bash
+cp nginx-pod.yaml nginx-nonroot-pod.yaml
+vo nginx-nonroot-pod.yaml
+vi nginx-nonroot-pod.yaml
+kubectl apply -f nginx-nonroot-pod.yaml
+kubectl get pods
+vi security-context-pod.yaml
+kubectl apply -f security-context-pod.yaml
+vi security-context-pod.yaml
+kubectl apply -f security-context-pod.yaml
+kubectl get pods security-context-pod 
+kubectl exec -it security-context-pod -- bash
+kubectl exec -it security-context-pod -- sh
+cp -rp security-context-pod.yaml security-context-pod2.yaml 
+vi security-context-pod2.yaml
+kubectl apply -f security-context-pod2.yaml
+vi security-context-pod2.yaml
+kubectl apply -f security-context-pod2.yaml
+kubectl exec -it security-context-pod2 -- sh
+kubectl create ns np-test
+kubectl describe ns np-test 
+vi np-nginx.yaml
+kubectl apply -f np-nginx.yaml
+vi np-busybox.yaml
+kubectl apply -f np-busybox.yaml
+kubectl get pods -n np-test 
+kubectl get pods -n np-test  -o wide
+kubectl exec -it -n np-test np-busybox -- sh
+vi my-networkpolicy.yaml
+kubectl apply -n my-networkpolicy.yaml
+kubectl apply -f my-networkpolicy.yaml
+kubectl get networkpolicies.networking.k8s.io -n np-test my-networkpolicy 
+kubectl describe networkpolicies.networking.k8s.io -n np-test my-networkpolicy
+NAME               POD-SELECTOR   AGE
+kubectl describe networkpolicies.networking.k8s.io -n np-test my-networkpolicy
+kubectl exec -it -n np-test np-busybox -- sh
+kubectl edit -n np-test networkpolicies.networking.k8s.io my-networkpolicy 
+kubectl describe networkpolicies.networking.k8s.io -n np-test my-networkpolicy
+kubectl exec -it -n np-test np-busybox -- sh
+kubectl -n np-test run another-test-pod --image busybox 
+kubectl exec -it -n np-test another-test-pod -- sh
+kubectl exec -it -n np-test another-test-pod -- bash
+kubectl get pods -n np-test 
+kubectl -n np-test run another-test-pod --image busybox --dry-run=client -o yaml another-test-pod.yaml
+kubectl -n np-test run another-test-pod --image busybox --dry-run=client -o yaml > another-test-pod.yaml
+vi another-test-pod.yaml
+kubectl delete pod -n np-test another-test-pod 
+kubectl apply -f another-test-pod.yaml -n np-test
+kubectl get pods -n np-test 
+kubectl events
+kubectl events -n np-test 
+vi another-test-pod.yaml
+kubectl delete pod -n np-test  another-test-pod 
+kubectl apply -f another-test-pod.yaml -n np-test
+kubectl get pods -n np-test 
+vi another-test-pod.yaml
+kubectl delete pod -n np-test  another-test-pod 
+cp -rp np-busybox.yaml another-test-pod.yaml 
+vi another-test-pod.yaml
+kubectl apply -f another-test-pod.yaml
+kubectl get pods -n np-test 
+kubectl exec -it -n np-test another-test-pod -- sh
+kubectl delete ns np-test 
+kubectl get pods 
+wget https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml
+vi components.yaml 
+kubectl apply -f components.yaml
+kubectl -n kube-system get all
+watch -n1 kubectl -n kube-system get pods 
+kubectl top
+kubectl top node
+kubectl top pods
+kubectl apply -f ../day1/sidecar-pod.yaml 
+kubectl top pods
+kubectl top pods --containers 
+kubectl top pods
+vi php-apahce.yaml
+vi load-generator.yaml
+kubectl run -i --tty load-generator --rm --image=busybox:1.28 --restart=Never -- /bin/sh -c "while sleep 0.01; do wget -q -O- http://php-apache; done" -o yaml --dry-run=client
+kubectl run -i --tty load-generator --rm --image=busybox:1.28 --restart=Never  -o yaml --dry-run=client -- /bin/sh -c "while sleep 0.01; do wget -q -O- http://php-apache; done"
+vi load-generator.yaml
+kubectl apply -f php-apahce.yaml
+kubectl get pod,deploy
+kubectl events
+kubectl get pod,deploy
+kubectl autoscale deployment php-apache --cpu-percent 60% --min 2 --max 10
+kubectl autoscale deployment php-apache --cpu-percent 60 --min 2 --max 10
+kubectl get pod,deploy
+kubectl get pods
+kubectl get hpa
+kubectl get pods
+kubectl apply -f load-generator.yaml 
+vi load-generator.yaml 
+kubectl apply -f load-generator.yaml 
+kubectl get hpa
+watch -n1 kubectl get hpa
+watch -n1 kubectl get pods
+kubectl delete deployments.apps load-generator 
+watch -n1 kubectl get pods
+sudo journalctl 
+sudo journalctl -u containerd
+sudo journalctl -u containerd -p err 
+sudo journalctl -u kubelet -p err 
+sudo journalctl -u kubelet 
+cd /var/log/pods/
+ls -la
+cd kube-system_kube-apiserver-k8s-master_a6a8543564ccaa5aeba222cd9e37fe5a
+ls -la
+cd kube-apiserver/
+ls -la
+less 5.log 
+sudo less 5.log 
+cd
+kubectl get pods
+kubectl logs secret-pod
+kubectl get pods
+kubectl logs nginx-nonroot-pod
+kubectl get events -n default 
+kubectl get pods
+kubectl get events -n default | grep nginx-nonroot-pod
+kubectl get events -A
+kubectl get events -A | grep sidecar-pod
+kubectl get events -A | grep sidecar-pod > sidecar-logs.txt
+kubectl get events -A --sort-by .metadata.creationTimestamp
+kubectl get pods
+kubectl exec -it nginx-nonroot-pod -- sh
+kubectl run ephemeral-demo --image=registry.k8s.io/pause:3.1 --restart=Never
+kubectl get pod 
+kubectl exec -it ephemeral-demo -- sh
+kubectl exec -it ephemeral-demo -- bash
+kubectl debug -it ephemeral-demo --image busybox --target=ephemeral-demo
+kubectl debug -it nginx-nonroot-pod --image nicolaka/netshoot --target=nginx-nonroot-pod
+kubectl debug -it ephemeral-demo  --image nicolaka/netshoot --target=ephemeral-demo
+ls -la /etc/kubernetes/manifests/
+vi /etc/systemd/system/kubelet.service.d/10-kubeadm.conf 
+which kubelete
+which kubelet
+systemctl status kubelet.service 
+kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/v2.7.0/aio/deploy/recommended.yaml 
+watch -n1 kubectl get pods -n kubernetes-dashboard
+kubectl get sa -n kubernetes-dashboard
+kubectl get svc -n kubernetes-dashboard
+kubectl get ingres
+kubectl get ingress
+kubectl edit ingress ingress-web
+cd kbs103_Aug/day3/
+cp ../day2/ingress-web.yaml dashboard-ingress.yaml
+vi dashboard-ingress.yaml
+kubectl apply -f dashboard-ingress.yaml -n kubernetes-dashboard 
+vi dashboard-ingress.yaml
+kubectl apply -f dashboard-ingress.yaml -n kubernetes-dashboard 
+kubectl get ingress -n kubernetes-dashboard
+kubectl get sa -n kubernetes-dashboard 
+kubectl get clusterrolebindings.rbac.authorization.k8s.io 
+kubectl get clusterrolebindings.rbac.authorization.k8s.io  | grep -i dashboar
+kubectl get clusterrole kubernetes-dashboard 
+kubectl describe clusterrole kubernetes-dashboard 
+kubectl create sa dashboard-admin -n kubernetes-dashboard 
+kubectl create clusterrolebinding dashboard-admin --clusterrole cluster-admin --help
+kubectl create clusterrolebinding dashboard-admin --clusterrole cluster-admin --serviceaccount=kubernetes-dashboard:dashboard-admin 
+kubectl -n kubernetes-dashboard create token dashboard-admin 
+kubectl create secret generic dashboard-admin --from-literal token=eyJhbGciOiJSUzI1NiIsImtpZCI6InVTUlVISUFablF5VC1yb1NMRHhhNHhjaThfYi1YQlluUk51bzNaeG9PUFkifQ.eyJhdWQiOlsiaHR0cHM6Ly9rdWJlcm5ldGVzLmRlZmF1bHQuc3ZjLmNsdXN0ZXIubG9jYWwiXSwiZXhwIjoxNzI0ODU1NDc4LCJpYXQiOjE3MjQ4NTE4NzgsImlzcyI6Imh0dHBzOi8va3ViZXJuZXRlcy5kZWZhdWx0LnN2Yy5jbHVzdGVyLmxvY2FsIiwia3ViZXJuZXRlcy5pbyI6eyJuYW1lc3BhY2UiOiJrdWJlcm5ldGVzLWRhc2hib2FyZCIsInNlcnZpY2VhY2NvdW50Ijp7Im5hbWUiOiJkYXNoYm9hcmQtYWRtaW4iLCJ1aWQiOiJiYjlmNjM5Zi03ZWE4LTQ5NjUtYjE4OS1iNjYxYWVmMGRmZjQifX0sIm5iZiI6MTcyNDg1MTg3OCwic3ViIjoic3lzdGVtOnNlcnZpY2VhY2NvdW50Omt1YmVybmV0ZXMtZGFzaGJvYXJkOmRhc2hib2FyZC1hZG1pbiJ9.H3mU_CDYqbEAb8_T41mu09CpTuS4bGpyY8UOuV7W9Ts3Kwq8DamejvU9KYzZPk5BG33ywlL-fo43IvOEqJpQpNHWhCQbKv9fGjwjqUbc8PjngiatZVnAciSPjU8em72qFSWsr7k-gv9jHF23Epfmq8J_Tq8A9pNMdYfPjJnYFot4QWTZOzod_FDNE2QkXWGEPvrUSSYrhbivKrcU0x86KwoA4eu0onndqy9Eft7mTunDawYm2ILzGdLx416BcUdI8yPmlIPMWyPb0_XExW3FGGdJ6d0gkgxniQ-agw4Xd0kwnhQ3CdCLtAKlPa6gcLt1POtWeU9dTs8Yo107YgstnQ
+kubectl get -n kubernetes-dashboard get sec
+kubectl get -n kubernetes-dashboard secrets 
+cd ..
+hstory
+history
+history | awk '$1 > 485' | cut -c 8- >> day3-history.txt

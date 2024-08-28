@@ -1,0 +1,3 @@
+# that is a comment
+ENV_VAR1=5
+ENV_VAR2=test string

@@ -1,0 +1,5 @@
+{
+	"schedule": "10:00:00",
+	"taskName": "Restart the service app1",
+	"exitCode": "0"
+}

@@ -1,0 +1,13 @@
+apiVersion: lab.local/v1
+kind: DbConnection
+metadata:
+  name: dbconn1
+  labels:
+    crd: dbcon1
+spec:
+  dbType: postgress
+  defaultDbSchama: "test-database"
+  capacityGb: 50
+  configMapRef: my-configmap
+  rootUser: root
+  rootPassword: S3cureP@ss!
